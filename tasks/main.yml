@@ -136,6 +136,14 @@
     - ansible_os_family == 'Debian'
     - cassandra_configuration_file is not defined
 
+- name: Set Default Env Configuration File Location (Debian)
+  set_fact:
+    cassandra_env_configuration_file: /etc/cassandra/cassandra-env.sh
+  when:
+    - ansible_os_family is defined
+    - ansible_os_family == 'Debian'
+    - cassandra_env_configuration_file is not defined
+
 - name: Set Default Configuration File Location (RedHat)
   set_fact:
     cassandra_configuration_file: /etc/cassandra/default.conf/cassandra.yaml
@@ -143,6 +151,14 @@
     - ansible_os_family is defined
     - ansible_os_family == 'RedHat'
     - cassandra_configuration_file is not defined
+
+- name: Set Default Env Configuration File Location (RedHat)
+  set_fact:
+    cassandra_env_configuration_file: /etc/cassandra/default.conf/cassandra-env.sh
+  when:
+    - ansible_os_family is defined
+    - ansible_os_family == 'RedHat'
+    - cassandra_env_configuration_file is not defined
 
 - name: Apply Cassandra Configuration
   template:
@@ -154,6 +170,16 @@
   notify:
     - cassandra_restart_service
 
+- name: Apply Cassandra Env Configiration
+  template:
+    src: "{{ cassandra_env_configuration_templ }}"
+    dest: "{{ cassandra_env_configuration_file }}"
+    owner: root
+    group: root
+    mode: 0644
+  notify:
+    - cassandra_restart_service
+  
 - name: Set the DC for Cassandra
   lineinfile:
     dest: "{{ cassandra_configuration_file | dirname }}/cassandra-rackdc.properties"
