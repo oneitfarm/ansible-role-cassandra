@@ -1,0 +1,15 @@
+---
+- name: Set download file name
+  set_fact:
+    cassandra_jmx_exporter_filename: jmx_prometheus_javaagent-{{ cassandra_jmx_exporter_version }}.jar
+
+- name: Download jmx prometheus java agent
+  get_url:
+    url: https://repo1.maven.org/maven2/io/prometheus/jmx/jmx_prometheus_javaagent/{{ cassandra_jmx_exporter_version }}/{{ cassandra_jmx_exporter_filename }}
+    dest: /usr/share/cassandra/{{ cassandra_jmx_exporter_filename }}
+
+- name: Config Jmx Exporter
+  copy:
+    src: files/jmx-exporter.yaml
+    dest: /etc/cassandra/jmx-exporter.yaml
+

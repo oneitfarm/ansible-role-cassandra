@@ -109,6 +109,13 @@
     - ansible_os_family == 'Debian'
     - not ansible_check_mode
 
+- name: Install Jmx Exporter
+  include: jmx.yml
+  when:
+    - cassandra_enable_jmx_exporter
+  notify:
+    - cassandra_restart_service
+
 - name: Systemd Workaround
   template:
     src: "{{ cassandra_systemd_template }}"
